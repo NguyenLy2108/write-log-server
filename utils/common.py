@@ -1,0 +1,27 @@
+
+
+from services.NotificationServer import NotificationService
+
+
+notiService = NotificationService()
+
+
+'''
+    notification_config_type:
+        activity
+        events
+        news
+        message
+        points
+'''
+def get_device_list_with_notification_config(user_id_list = [], notification_config_type = ''):
+    sql_query = "select d.token, d.user_id from reviewtydev.device d left join reviewtydev.user_notification_config unc on unc.user_id = d.user_id where d.user_id in ({}) \
+             and (unc.{} is null or unc.{} = true)\
+        ".format(
+            ', '.join([str(id) for id in user_id_list]),
+            notification_config_type,
+            notification_config_type
+        )
+
+    # print(sql_query)
+    return notiService.query(sql_query)
