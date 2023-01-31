@@ -1,1 +1,1 @@
-sudo docker build -t reviewty/firebase-worker:4.1.0 -f Firebase.Dockerfile .
+sudo docker build -t reviewty/firebase-worker:4.2.0 -f Firebase.Dockerfile .

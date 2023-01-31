@@ -65,6 +65,7 @@ class UserRequestEvent():
                         'productId': product_id,
                         'productName': product_info['name'],
                         'no_id': noId,
+                        'title': 'Cập nhật sản phẩm: ' + product_info['name']
                     },
                     'type': "send_token_push",
                     'tokens': token_list[idx:idx+500],

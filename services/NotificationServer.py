@@ -29,7 +29,6 @@ class NotificationService():
                 })
 
             receiverIds = data.get('receiverIds', [])
-            print(receiverIds[:10])
             insert_data = []
             for receiverId in receiverIds:
                 # print('Insert notification receiver', receiverId)
@@ -111,8 +110,6 @@ class NotificationService():
 
         return self.postgresql.update(update_query, tuple([data[key] for key in key_data]+[condition[key] for key in key_condition]))
 
-
-    
     def updateWhere(self, db_name, where_condition, data):
         
         # key_condition = condition.keys()

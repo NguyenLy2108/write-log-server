@@ -56,7 +56,7 @@ class EventNotificationAdmin():
         
         event_id = message['event_id']
         
-        sql_query = "select title, attached_link from reviewtydev.notification_event where id = '{}'".format(event_id)
+        sql_query = "select title, attached_link, content from reviewtydev.notification_event where id = '{}'".format(event_id)
         
         event = self.notiService.query(sql_query)[0]
 
@@ -100,7 +100,7 @@ class EventNotificationAdmin():
                     'type': str(message['type']),
                     'title': event['title'],
                     'attached_link': event.get('attached_link', ''),
-                    # 'detail': event.get('detail', ''),
+                    "body": event.get('content', '')
                 },
                 'type': "send_token_push",
                 'tokens': token_list[idx:idx+500],

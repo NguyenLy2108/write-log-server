@@ -43,9 +43,9 @@ class FirebaseConsumer():
         return
 
     def send_token_push(self, data, tokens, user_ids, no_id):
-        print('DATA ', data)
-        alert = messaging.ApsAlert(body = " ")
         
+        alert = messaging.ApsAlert(body = ' ')
+
         if data.get('entityType') == 11:
             alert = messaging.ApsAlert(body = "Yêu cầu của bạn về sản phẩm đã được xử lý. Cập nhật phiên bản mới để hiển thị chi tiết")
         if data.get('entityType') == 10:
@@ -56,7 +56,9 @@ class FirebaseConsumer():
             alert = messaging.ApsAlert(body = "Reviewty có tin tức mới. Cập nhật phiên bản mới để hiển thị chi tiết")
         if data.get('entityType') == 7:
             alert = messaging.ApsAlert(body = "Reviewty có sự kiện mới. Cập nhật phiên bản mới để hiển thị chi tiết")
-
+        
+        if data.get('body', '') != '':
+            alert = messaging.ApsAlert(body = data.get('body'))
 
         aps = messaging.Aps(alert = alert, sound = "default", mutable_content=True)
         payload = messaging.APNSPayload(aps)
