@@ -29,8 +29,14 @@ class CreatePostEvents():
 
         data['notificationId'] = noId
         
-        data['account'] = self.get_users(data['authorId'])[0]['account_name']
+        user_info = self.get_users(data['authorId'])[0]
+        data['account'] = user_info['account_name']
         
+        try:
+            data['avatar'] = self.get_avatar(user_info['avatar_id'])
+        except:
+            data['avatar'] = ''
+
         receiverIds = self.get_follower_ids(data)
 
         device_list = get_device_list_with_notification_config(receiverIds, 'activity')
@@ -50,7 +56,11 @@ class CreatePostEvents():
         
 
     def get_users(self, user_id = ''):
-        sql_query = f'select account_name from reviewtydev.user where id={user_id}'
+        sql_query = f'select u.account_name , u.avatar_id from reviewtydev.user u where u.id={user_id}'
+        return self.notiService.query(sql_query)
+    
+    def get_avatar(self, image_id):
+        sql_query = f'select url from reviewtydev.image where id={image_id}'
         return self.notiService.query(sql_query)
     
     def get_follower_ids(self, data):

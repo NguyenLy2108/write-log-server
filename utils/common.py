@@ -23,5 +23,13 @@ def get_device_list_with_notification_config(user_id_list = [], notification_con
             notification_config_type
         )
 
-    # print(sql_query)
     return notiService.query(sql_query)
+
+def get_users(self, user_id = ''):
+        sql_query = f'select u.account_name , u.avatar_id from reviewtydev.user u where u.id={user_id}'
+        return self.notiService.query(sql_query)
+
+def get_avatar(self, image_id):
+    sql_query = f'select url from reviewtydev.image where id={image_id}'
+    return self.notiService.query(sql_query)
+

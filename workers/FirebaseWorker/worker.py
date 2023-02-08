@@ -1,10 +1,3 @@
-# worker
-
-# include listener and event, do event then sending to outputor if nessesary
-# connect to a listener and 
-# import listener
-# import worker 
-# for a listener has events, distribute them to the related worker
 import json
 import os 
 from listeners.RabbitMQListener import RabbitMQListener

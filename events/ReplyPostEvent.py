@@ -4,7 +4,7 @@ from services.NotificationServer import NotificationService
 from outputor.FirebasePusher import FirebasePusher
 import time
 
-from utils.common import get_device_list_with_notification_config 
+from utils.common import get_device_list_with_notification_config, get_users, get_avatar 
 
 class ReplyPostEvents():
     name = 'REPLY_POST_NOTIFICATION'
@@ -92,19 +92,24 @@ class ReplyPostEvents():
                 'type': noti_type,
                 'changerIds': [comment_data['authorId']],
                 'receiverIds': receiverIds,
-
             }
+
             noId = self.notiService.create(data=noti_log)
+            user_info = get_users(comment_data['authorId'])[0]
+            try:
+                avatar = get_avatar(user_info['avatar_id'])
+            except:
+                avatar = ''
 
             noti_message = {
                 'type': noti_type,
                 'account': message['commentAccount'],
+                'avatar': avatar,
                 'notificationId': noId,
                 'postId': comment_data['postId'],
                 'postCommentId': comment_data['id']
             }
 
-            # token_list = self.get_device_list(receiverIds)
             device_list = get_device_list_with_notification_config(receiverIds, 'activity')
 
             self.send_notification(device_list, noti_message, noId=noId)
@@ -127,24 +132,25 @@ class ReplyPostEvents():
             noId = self.notiService.create(data=noti_log)
 
             device_list = get_device_list_with_notification_config(sender_ids, 'activity')
+            
+            user_info = get_users(comment_data['authorId'])[0]
+            try:
+                avatar = get_avatar(user_info['avatar_id'])
+            except:
+                avatar = ''
 
             noti_message = {
                 'type': noti_type,
                 'account': message['commentAccount'],
+                'avatar': avatar,
                 'notificationId': noId,
                 'postId': comment_data['postId'],
                 'postCommentId': comment_data['id'],
                 "no_id": str(noId),
             }
+            
             self.send_notification(device_list, noti_message, noId=noId)
 
-
-    def get_users(self, user_id = ''):
-        
-        sql_query = f'select account_name from reviewtydev.user where id={user_id}'
-        
-        return self.notiService.query(sql_query)
-    
 
     def send_notification(self, follower_token_list, data, noId):
         # follower_token_list = ['ff9lm1DWS2uDE9ZGgAo0cd:APA91bFpd2iyKTB9slBvel563SmlnR9H0KX6aunNU3CRQUi78qU6YxB7p3zr3_733x7mUw8LzsuB0kjna8jQlyL_QOVnuALzKrP6zsNchOWjLDpc0r4kkRoQgBJhgtErKfUWdePWyyBz']

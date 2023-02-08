@@ -4,7 +4,7 @@ from services.NotificationServer import NotificationService
 from outputor.FirebasePusher import FirebasePusher
 import time
 
-from utils.common import get_device_list_with_notification_config 
+from utils.common import get_device_list_with_notification_config, get_users, get_avatar 
 
 class ReactPostEvents():
     name = 'REACT_POST_NOTIFICATION'
@@ -22,6 +22,7 @@ class ReactPostEvents():
 
         postAuthor = self.notiService.query(sql_query)
         print(sql_query, postAuthor)
+
         postAuthorId = postAuthor[0]['user_id']
         if (postAuthorId == data['currentUserId']):
             print("Same person")
@@ -32,26 +33,27 @@ class ReactPostEvents():
         noId = self.notiService.create(data=data)
 
         if noId:
+            user_info = get_users(data['currentUserId'])[0]
+            try:
+                avatar = get_avatar(user_info['avatar_id'])
+            except:
+                avatar = ''
+
             send_data =  {
                    "type": data['type'],
                    "account": data['account'],
+                   "avatar": avatar,
                    "notificationId": noId,
                    "postId": data['entityId'],
                    "status": data['status'] ,
-                    "no_id": str(noId),
+                   "no_id": str(noId),
             }
 
-            # token_list = self.get_device(postAuthorId)
             device_list = get_device_list_with_notification_config([postAuthorId], 'activity')
 
             self.send_notification(device_list, send_data, noId=noId)
 
-    def get_users(self, user_id = ''):
         
-        sql_query = f'select account_name from reviewtydev.user where id={user_id}'
-        
-        return self.notiService.query(sql_query)
-            
     def send_notification(self, follower_token_list, data, noId):
         print("Start sending message to the Firebase")
         for key in data.keys():

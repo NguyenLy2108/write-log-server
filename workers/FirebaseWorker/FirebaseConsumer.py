@@ -35,7 +35,12 @@ class FirebaseConsumer():
         no_type = message['type']
         # print(message['data'])
         if no_type ==  "send_token_push":
-            return self.send_token_push(data=message['data'], tokens=message['tokens'], user_ids=message['user_ids'],no_id = message['no_id'])
+            return self.send_token_push(
+                data=message['data'], 
+                tokens=message['tokens'], 
+                user_ids=message['user_ids'],
+                no_id = message['no_id']
+            )
         if no_type ==  "send_topic_android":
             return self.send_topic_android(data=message['data'], topic=message['topic'])
         if no_type ==  "send_topic_ios":

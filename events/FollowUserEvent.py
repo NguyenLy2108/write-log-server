@@ -4,7 +4,7 @@ from services.NotificationServer import NotificationService
 from outputor.FirebasePusher import FirebasePusher
 import time
 
-from utils.common import get_device_list_with_notification_config 
+from utils.common import get_device_list_with_notification_config, get_avatar, get_users
 
 class FollowUserEvent():
     name = 'FOLLOW_USER_EVENT'
@@ -32,7 +32,14 @@ class FollowUserEvent():
         user_list = [(r['user_id']) for r in device_list]
         
         print("Number of devices: ", len(token_list))
-        follower_name = self.get_users(data['follower_id'])[0]['account_name']
+        user_info = get_users(data['follower_id'])[0]
+        follower_name = user_info['account_name']
+
+        try:
+            avatar = get_avatar(user_info['avatar_id'])
+        except:
+            avatar = ''
+
         for idx in range(0, len(token_list), 500):
             send_token_push = {
                 'data': {
@@ -40,6 +47,7 @@ class FollowUserEvent():
                     'entityId': data['follower_id'],
                     'entityType': data['entity_type'],
                     'followerName': follower_name,
+                    'avatar': avatar,
                     'no_id': noId,
                 },
                 'type': "send_token_push",
@@ -49,27 +57,6 @@ class FollowUserEvent():
             }
             
             self.firebase.publish(send_token_push)
-
-
-    def get_users(self, user_id = ''):
-        sql_query = f'select account_name from reviewtydev.user where id={user_id}'
-        return self.notiService.query(sql_query)
-    
-
-    def get_device(self, authorId):
-        
-        sql_query = f"select token from reviewtydev.device d where d.user_id={authorId}"
-        
-        token_list = self.notiService.query(sql_query)
-        
-        return [r['token'] for r in token_list]
-
-
-    def get_device_list(self, user_id_list = []):
-        
-        sql_query = "select token, user_id from reviewtydev.device d where d.user_id in ({})".format(', '.join([str(id) for id in user_id_list]))
-        
-        return self.notiService.query(sql_query)
 
     def send_notification(self, follower_token_list, data, noId):
 
