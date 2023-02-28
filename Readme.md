@@ -1,17 +1,69 @@
 # Notification Service
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
+## Code structure
+```
+├── Dockerfile
+├── Firebase.Dockerfile
+├── Readme.md
+├── build-firebase-worker.sh
+├── build.sh
+├── database  
+│   ├── __pycache__
+│   └── database.py
+├── distributor  (Receive events from queue and distribute to processors)
+│   ├── __pycache__
+│   └── distribute_events.py
+├── env
+│   ├── bin
+│   ├── include
+│   ├── lib
+│   └── pyvenv.cfg
+├── events      (Implemented processors to process events) 
+│   ├── AwardPointEvent.py
+│   ├── CreatePostEvent.py
+│   ├── EventFactory.py
+│   ├── EventNotificationAdmin.py
+│   ├── EventNotificationAdminResend.py
+│   ├── FollowUserEvent.py
+│   ├── ReactPostEvent.py
+│   ├── ReplyPostEvent.py
+│   ├── SaleEvents.py
+│   ├── UserRequestEvent.py
+│   └── __pycache__
+├── listeners       (Listeners collection to make message queues)
+│   ├── KafkaListener.py
+│   ├── ListenerAbstract.py
+│   ├── RabbitMQListener.py
+│   └── __pycache__
+├── main.py
+├── outputor    
+│   ├── EventSource.py
+│   ├── FirebasePusher.py
+│   ├── Websocket.py
+│   └── __pycache__
+├── requirements.txt
+├── reviewty-test-firebase-adminsdk-x8m04-eecfc9bbda.json
+├── scheduler
+│   └── SaleEventTimer.py
+├── services
+│   ├── NotificationServer.py
+│   └── __pycache__
+├── utils
+│   ├── __pycache__
+│   └── common.py
+└── workers     (A other workers for sending notification) 
+    ├── FirebaseWorker
+    ├── PostEventWorker.py
+    └── __pycache__
+```
+
 ## Making new event or new notification flow
 #### 1.  In Graphql API service, make news event by sending data to the message queue
 ```
 const message = {
   type: 'EVENT_NOTIFICATION_ADMIN',
-  data: {
-    event_id: data.eventId,
-    entity_type: entityType,
-    type: type,
-    mode: 'alarm',
-  },
+  data: your_data,
   time: new Date(),
 };
 
@@ -63,6 +115,7 @@ type
 entity_id
 entity_type 
 ```
+
 entity_type:
 ```
 export enum NotificationEntityType {

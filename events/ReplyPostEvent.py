@@ -153,7 +153,6 @@ class ReplyPostEvents():
 
 
     def send_notification(self, follower_token_list, data, noId):
-        # follower_token_list = ['ff9lm1DWS2uDE9ZGgAo0cd:APA91bFpd2iyKTB9slBvel563SmlnR9H0KX6aunNU3CRQUi78qU6YxB7p3zr3_733x7mUw8LzsuB0kjna8jQlyL_QOVnuALzKrP6zsNchOWjLDpc0r4kkRoQgBJhgtErKfUWdePWyyBz']
 
         print("Start sending message to the Firebase")
         start = time.time()

@@ -2,6 +2,7 @@ from events.AwardPointEvent import AwardPointEvent
 from events.EventNotificationAdmin import EventNotificationAdmin
 from events.EventNotificationAdminResend import EventNotificationAdminResend
 from events.FollowUserEvent import FollowUserEvent
+from events.RejectReviewEvent import RejectReviewEvents
 
 from .CreatePostEvent import CreatePostEvents
 from .ReactPostEvent import ReactPostEvents
@@ -21,6 +22,7 @@ class EventFactory():
         FollowUserEvent,
         AwardPointEvent,
         UserRequestEvent,
+        RejectReviewEvents,
     ]
 
     def getEvent(self, type):

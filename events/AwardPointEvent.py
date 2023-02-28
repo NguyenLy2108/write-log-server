@@ -36,7 +36,6 @@ class AwardPointEvent():
             'changerIds': [2556], # Default sender is the reviewty official,
         }
 
-        # device_list = self.get_device_list(app_notification_object["receiverIds"])
         device_list = get_device_list_with_notification_config(app_notification_object["receiverIds"], 'points')
         noId = self.notiService.create(app_notification_object)
 

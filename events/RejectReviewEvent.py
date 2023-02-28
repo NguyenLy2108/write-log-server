@@ -6,30 +6,40 @@ import time
 
 from utils.common import get_device_list_with_notification_config 
 
-class CreatePostEvents():
-    name = 'CREATE_POST_NOTIFICATION'
+class RejectReviewEvents():
+    name = 'REJECT_REVIEW'
     
     def __init__(self) -> None: 
         self.notiService = NotificationService()
         self.firebase = FirebasePusher()
 
     def do(self, message):
-        
-        # Insert notification information to the database
-        follower_ids = self.get_follower_ids(message['data'])
+        message = message["data"]
 
-        message['noti']['receiverIds'] = follower_ids
-        
-        if len(follower_ids) == 0:
-            return
+        review = self.get_review(message['entity_id'])
+        author_id = review['author_id']
+        product_id = review['product_id']
 
-        noId = self.notiService.create(message['noti'])
-        
-        data = message['data']
+        app_notification_object = {
+            'entityId': message['entity_id'],
+            'entityType': message['entity_type'],
+            'type': message['type'],
+            'receiverIds': [author_id],
+            'changerIds': [2556], # Default sender is the reviewty official
+        }
 
-        data['notificationId'] = noId
-        
-        user_info = self.get_users(data['authorId'])[0]
+        noId = self.notiService.create(app_notification_object)
+
+        data = {
+            'entityId': message['entity_id'],
+            'entityType': message['entity_type'],
+            'type': message['type'],
+            'productId': product_id,
+            'no_id': noId,
+            'title': 'Cập nhật phiên bản ứng dụng để xem nội dung mới nhất',
+        }
+
+        user_info = self.get_users(2556)[0]
         data['account'] = user_info['account_name']
         
         try:
@@ -37,13 +47,14 @@ class CreatePostEvents():
         except:
             data['avatar'] = ''
 
-        receiverIds = self.get_follower_ids(data)
-
-        device_list = get_device_list_with_notification_config(receiverIds, 'activity')
-
-        print("Nb followers: ", len(device_list))
+        device_list = get_device_list_with_notification_config([author_id], 'activity')
 
         self.send_notification(device_list, data, noId=noId)
+
+
+    def get_review(self, reviewId):
+        sql_query = f'select r.author_id, r.product_id from reviewtydev.real_review r where r.id={reviewId}'
+        return self.notiService.query(sql_query)[0]
 
 
     def execute(self, ch, method, properties, message):
@@ -63,25 +74,8 @@ class CreatePostEvents():
         sql_query = f'select url from reviewtydev.image where id={image_id}'
         return self.notiService.query(sql_query)[0]['url']
     
-    def get_follower_ids(self, data):
-        user_id = data['authorId']
-        
-        sql_query = f"select follower_id from reviewtydev.user_to_follower utf2 where user_id={user_id}"
-        
-        follower_token_list = self.notiService.query(sql_query)
-        
-        return [r['follower_id'] for r in follower_token_list]
 
-    def get_follower_token(self, data):
-        user_id = data['authorId']
-        
-        sql_query = f"select token, user_id from reviewtydev.device d where d.user_id in (select follower_id from reviewtydev.user_to_follower utf2 where user_id={user_id})"
-        
-        follower_token_list = self.notiService.query(sql_query)
-        
-        return follower_token_list
-
-    def send_notification(self, follower_token_list, data, noId):
+    def send_notification(self, receiver_token_list, data, noId):
         
         print("Start sending message to the Firebase")
         
@@ -91,8 +85,8 @@ class CreatePostEvents():
         
         print('Firebase Data: ', data)
 
-        token_list = [r['token'] for r in follower_token_list]
-        user_list = [r['user_id'] for r in follower_token_list]
+        token_list = [r['token'] for r in receiver_token_list]
+        user_list = [r['user_id'] for r in receiver_token_list]
 
         for idx in range(0, len(token_list), 500):
             send_token_push = {

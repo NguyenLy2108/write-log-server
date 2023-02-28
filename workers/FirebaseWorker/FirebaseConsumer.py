@@ -33,7 +33,6 @@ class FirebaseConsumer():
     
     def do(self, message):
         no_type = message['type']
-        # print(message['data'])
         if no_type ==  "send_token_push":
             return self.send_token_push(
                 data=message['data'], 
@@ -51,17 +50,9 @@ class FirebaseConsumer():
         
         alert = messaging.ApsAlert(body = ' ')
 
-        if data.get('entityType') == 11:
-            alert = messaging.ApsAlert(body = "Yêu cầu của bạn về sản phẩm đã được xử lý. Cập nhật phiên bản mới để hiển thị chi tiết")
-        if data.get('entityType') == 10:
-            alert = messaging.ApsAlert(body = "Điểm thưởng của bạn đã thay đổi. Cập nhật phiên bản mới để hiển thị chi tiết")
-        if data.get('entityType') == 9:
-            alert = messaging.ApsAlert(body = "Bạn được người khác theo dõi. Cập nhật phiên bản mới để hiển thị chi tiết")
-        if data.get('entityType') == 8:
-            alert = messaging.ApsAlert(body = "Reviewty có tin tức mới. Cập nhật phiên bản mới để hiển thị chi tiết")
-        if data.get('entityType') == 7:
-            alert = messaging.ApsAlert(body = "Reviewty có sự kiện mới. Cập nhật phiên bản mới để hiển thị chi tiết")
-        
+        if data.get('entityType') == '5':
+            alert = messaging.ApsAlert(body = "Cập nhật phiên bản mới để hiển thị nội dung chi tiết")
+
         if data.get('body', '') != '':
             alert = messaging.ApsAlert(body = data.get('body'))
 

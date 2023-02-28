@@ -57,15 +57,15 @@ class SaleEvents():
         }
             
         self.firebase.publish({
-                'data': noti_data,
-                'type': "send_topic_android",
-                'topic': "/topics/event",
+            'data': noti_data,
+            'type': "send_topic_android",
+            'topic': "/topics/event",
         })
 
         self.firebase.publish({
-                'data': noti_data,
-                'type': "send_topic_ios",
-                'topic': "/topics/event-ios",
+            'data': noti_data,
+            'type': "send_topic_ios",
+            'topic': "/topics/event-ios",
         })
 
         # self.firebase.send_topic(noti_data, "/topics/event")
