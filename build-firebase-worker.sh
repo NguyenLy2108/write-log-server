@@ -1,0 +1,1 @@
+sudo docker build -t reviewty/firebase-worker:4.3.0 -f Firebase.Dockerfile .
