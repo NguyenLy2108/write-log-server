@@ -157,4 +157,4 @@ python -m workers.FirebaseWorker.worker
 sudo docker build -t reviewty/events-processor:4.2.0 .
 
 ### Build firebase worker
-sudo docker build -t reviewty/firebase-worker:4.2.0 .
+sudo docker build -t reviewty/firebase-worker:4.2.0 .# write-log-server
