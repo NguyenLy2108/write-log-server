@@ -1,1 +1,0 @@
-sudo docker build -t reviewty/events-processor:4.3.0 .

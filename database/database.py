@@ -3,30 +3,24 @@ import os
 from pydantic import BaseModel
 import psycopg2
 import psycopg2.extras
-
-class PostgreConfig(BaseModel):
-    DB_HOST: str = "127.0.0.1"
-    DB_PORT: str = 5432 
-    DB_DATABASE: str = "reviewty"
-    DB_USER: str = "reviewty"
-    DB_PASSWORD: str = "123456aA"
+import config
 
 class PostgresqlStorage():
     def __init__(self) -> None:
         super().__init__()
         if len(os.environ) > 0:
-            self.config = PostgreConfig(**os.environ)
+            self.config = config.Settings(**os.environ)
         else:
-            self.config = PostgreConfig()
+            self.config = config.Settings()
         self.connect()
 
     def connect(self):
         self.conn = psycopg2.connect(
-            host=self.config.DB_HOST,
-            port=self.config.DB_PORT,
-            dbname=self.config.DB_DATABASE,
-            user=self.config.DB_USER,
-            password=self.config.DB_PASSWORD,
+            host=self.config.postgre_host,
+            port=self.config.postgre_port,
+            dbname=self.config.postgre_database,
+            user=self.config.postgre_user,
+            password=self.config.postgre_password,
             target_session_attrs="read-write"
         )
 
@@ -52,7 +46,7 @@ class PostgresqlStorage():
         except Exception as error:
             print(error)
             self.conn.rollback()
-        return None
+        return None    
     
     def insert_bulk(self, insert_sql, data_tuple):
         try:

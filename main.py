@@ -1,6 +1,7 @@
-from distributor.distribute_events import Distributor
+from workers.post_impression_event_worker import PostImpressionEventWorker
 
-if __name__ == '__main__':
-    
-    distributor = Distributor()
-    distributor.listen()
+if __name__ == '__main__':     
+    worker = PostImpressionEventWorker()   
+    worker.listen()
+   
+
