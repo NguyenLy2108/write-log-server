@@ -8,6 +8,7 @@ class Settings(BaseModel):
     redis_host = os.getenv('REDIS_HOST')    
     redis_port = os.getenv('REDIS_PORT')
     redis_topic = os.getenv('REDIS_TOPIC')
+    redis_pub_topic = os.getenv('REDIS_PUB_TOPIC')
 
     postgre_host = os.getenv('POSTGRE_HOST')    
     postgre_port = os.getenv('POSTGRE_PORT')

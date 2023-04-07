@@ -13,14 +13,18 @@ class PostImpressionEvents():
         pre_data = {
             "user_id": message['user_id'],
             "name": message['input']['data']['name'],
-            "data": message['input']['data']['message']
+            "data": message['input']['data']['message'],
+            "ip": message['ip'],
+            "timestamp": message['timestamp'],
+            "created_at": message['created_at'],
+            "query": message['query'],
+            "event": message['event']
         }        
        
         self.postImpressionService.create(pre_data, conn)        
 
     def execute(self, message, conn):
-        # Parse Json to Message  
-        print(message)     
+        # Parse Json to Message          
         if message['data'] != 1:            
             data = json.loads(str(message['data']))           
            

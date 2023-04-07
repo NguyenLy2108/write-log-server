@@ -20,11 +20,10 @@ class RedisListener(ListenerAbstract):
             host=self.config.redis_host,
             port=self.config.redis_port,
             decode_responses=True
-        )
-        self.consumer = self.connection.pubsub()
-
-
-    def start_consumer(self, redis_topic, event_callback):        
+        )  
+            
+    def start_consumer(self, redis_topic, event_callback):    
+        self.consumer = self.connection.pubsub()    
         self.consumer.subscribe(redis_topic)  
         self.consumer.listen()        
         for msg in self.consumer.listen():

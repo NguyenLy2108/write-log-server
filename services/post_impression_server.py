@@ -1,6 +1,9 @@
 import json
 from enum import Enum
 from database.database import PostgresqlStorage
+import config
+
+cfg = config.Settings()
 
 class Mode(Enum):
     CLICK = 1
@@ -45,7 +48,9 @@ class PostImpresstionService():
     def create(self, pre_data, conn):
         post_impression_objects = []        
         
-        power = self.get_power_full_like(conn)       
+        power = self.get_power_full_like(conn)   
+
+        impression_log = {}    
 
         if pre_data['name'] in ['post_view_list', 'review_view_list']:
             post_ids = json.loads(pre_data['data'])['content_list']
@@ -69,6 +74,23 @@ class PostImpresstionService():
                         # "device_token": r['device_token'] if 'device_token' in r else None,
                         "power": power
                     })
+                    impression_log = {
+                        'query': pre_data['query'],
+                        'device_token': pre_data['device_token'] if 'device_token' in pre_data else None,
+                        'timestamp': pre_data['timestamp'],
+                        'created_at': pre_data['created_at'],
+                        'input':{
+                            'post_id': str(post_id),
+                            'post_type': "post" if ( entity_type == 1) else "review",
+                        },
+                        'user_id': str(pre_data['user_id']),
+                        'event': pre_data['event'],
+                        'ip' : pre_data['ip'] if "ip" in pre_data else None
+                    }
+
+                    # publish data into channel name redis_pub_topic                   
+                    conn.publish(cfg.redis_pub_topic, str(impression_log))
+
                 except Exception as error:
                     print("######Message error: ", error, pre_data)   
 
@@ -82,14 +104,14 @@ class PostImpresstionService():
                     "mode": Mode.CLICK.value,
                     # "device_token": r['device_token'] if 'device_token' in r else None,
                     "power": power
-                })
-                
+                })                
+
             except Exception as error:
                 print("######Message error: ", error, pre_data)               
 
         if (len(post_impression_objects) > 0):    
             # print('-----Insert new post impression-----: ', post_impression_objects)            
-            self.insert_bulk("reviewtydev.server_log_view_post", post_impression_objects) 
+            self.insert_bulk("reviewtydev.server_log_view_post", post_impression_objects)             
     
     def insert_bulk(self, db_name, data_list=[{}]):
 
