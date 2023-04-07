@@ -89,7 +89,7 @@ class PostImpresstionService():
                     }
 
                     # publish data into channel name redis_pub_topic                   
-                    conn.publish(cfg.redis_pub_topic, str(impression_log))
+                    conn.publish(cfg.redis_pub_topic, json.dumps(impression_log))
 
                 except Exception as error:
                     print("######Message error: ", error, pre_data)   
